@@ -1,0 +1,16 @@
+{
+  "name": "crud-libros",
+  "version": "1.0.0",
+  "description": "CRUD de libros en consola con TypeScript y MongoDB",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "mongodb": "^6.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  }
+}
