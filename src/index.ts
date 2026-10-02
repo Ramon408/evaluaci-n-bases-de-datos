@@ -4,6 +4,13 @@ const URI = "mongodb://127.0.0.1:27017";
 
 const client = new MongoClient(URI);
 
+interface Libro {
+  titulo: string;
+  autor: string;
+  precio: number;
+  stock: number;
+}
+
 async function conectar(): Promise<void> {
   try {
     await client.connect();
