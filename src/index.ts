@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 const URI = "mongodb://127.0.0.1:27017";
 
@@ -13,6 +13,14 @@ interface Libro {
 
 function coleccionLibros() {
   return client.db("biblioteca").collection<Libro>("libros");
+}
+
+function validarId(id?: string): ObjectId {
+  if (!id || !ObjectId.isValid(id)) {
+    throw new Error("El ID ingresado no es válido");
+  }
+
+  return new ObjectId(id);
 }
 
 async function crearLibro(libro: Libro): Promise<void> {
@@ -36,6 +44,23 @@ async function leerLibros(): Promise<void> {
       `- [${libro._id}] ${libro.titulo} | ${libro.autor} | $${libro.precio} | stock: ${libro.stock}`
     );
   });
+}
+
+async function actualizarLibro(
+  id: ObjectId,
+  datos: Libro
+): Promise<void> {
+  const resultado = await coleccionLibros().updateOne(
+    { _id: id },
+    { $set: datos }
+  );
+
+  if (resultado.matchedCount === 0) {
+    console.log("No se encontró ningún libro con ese ID.");
+    return;
+  }
+
+  console.log("Libro actualizado correctamente.");
 }
 
 function obtenerLibroDesdeArgumentos(): Libro {
@@ -70,6 +95,19 @@ async function conectar(): Promise<void> {
     if (operacion === "read") {
        await leerLibros();
       }
+
+    if (operacion === "update") {
+       const id = validarId(process.argv[3]);
+
+       const datos: Libro = {
+            titulo: process.argv[4],
+            autor: process.argv[5],
+            precio: Number(process.argv[6]),
+            stock: Number(process.argv[7])
+        };
+
+       await actualizarLibro(id, datos);
+     }
 
   } catch (error) {
     console.error("Error:", error);
