@@ -63,6 +63,17 @@ async function actualizarLibro(
   console.log("Libro actualizado correctamente.");
 }
 
+async function eliminarLibro(id: ObjectId): Promise<void> {
+  const resultado = await coleccionLibros().deleteOne({ _id: id });
+
+  if (resultado.deletedCount === 0) {
+    console.log("No se encontró ningún libro con ese ID.");
+    return;
+  }
+
+  console.log("Libro eliminado correctamente.");
+}
+
 function obtenerLibroDesdeArgumentos(): Libro {
   const [, , , titulo, autor, precio, stock] = process.argv;
 
@@ -108,6 +119,11 @@ async function conectar(): Promise<void> {
 
        await actualizarLibro(id, datos);
      }
+
+     if (operacion === "delete") {
+        const id = validarId(process.argv[3]);
+        await eliminarLibro(id);
+      }
 
   } catch (error) {
     console.error("Error:", error);
