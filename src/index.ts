@@ -21,8 +21,25 @@ async function crearLibro(libro: Libro): Promise<void> {
   console.log("Libro creado con ID:", resultado.insertedId.toString());
 }
 
+async function leerLibros(): Promise<void> {
+  const libros = await coleccionLibros().find().toArray();
+
+  if (libros.length === 0) {
+    console.log("No hay libros cargados en la colección.");
+    return;
+  }
+
+  console.log(`Libros en la biblioteca (${libros.length}):`);
+
+  libros.forEach((libro) => {
+    console.log(
+      `- [${libro._id}] ${libro.titulo} | ${libro.autor} | $${libro.precio} | stock: ${libro.stock}`
+    );
+  });
+}
+
 function obtenerLibroDesdeArgumentos(): Libro {
-  const [, , titulo, autor, precio, stock] = process.argv;
+  const [, , , titulo, autor, precio, stock] = process.argv;
 
   if (!titulo || !autor || !precio || !stock) {
     throw new Error(
@@ -50,7 +67,10 @@ async function conectar(): Promise<void> {
        const libro = obtenerLibroDesdeArgumentos();
        await crearLibro(libro);
       }
-      
+    if (operacion === "read") {
+       await leerLibros();
+      }
+
   } catch (error) {
     console.error("Error:", error);
   } finally {
