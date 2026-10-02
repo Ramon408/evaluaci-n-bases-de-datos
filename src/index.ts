@@ -11,6 +11,10 @@ interface Libro {
   stock: number;
 }
 
+function coleccionLibros() {
+  return client.db("biblioteca").collection<Libro>("libros");
+}
+
 async function conectar(): Promise<void> {
   try {
     await client.connect();
