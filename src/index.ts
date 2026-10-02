@@ -21,20 +21,36 @@ async function crearLibro(libro: Libro): Promise<void> {
   console.log("Libro creado con ID:", resultado.insertedId.toString());
 }
 
+function obtenerLibroDesdeArgumentos(): Libro {
+  const [, , titulo, autor, precio, stock] = process.argv;
+
+  if (!titulo || !autor || !precio || !stock) {
+    throw new Error(
+      'Uso: node dist/index.js create "Titulo" "Autor" precio stock'
+    );
+  }
+
+  return {
+    titulo,
+    autor,
+    precio: Number(precio),
+    stock: Number(stock)
+  };
+}
+
 async function conectar(): Promise<void> {
   try {
     await client.connect();
 
     console.log("Conexión exitosa con MongoDB");
 
-    const libro: Libro = {
-      titulo: "El Principito",
-      autor: "Antoine de Saint-Exupéry",
-      precio: 5000,
-      stock: 10
-    };
+    const operacion = process.argv[2];
 
-    await crearLibro(libro);
+    if (operacion === "create") {
+       const libro = obtenerLibroDesdeArgumentos();
+       await crearLibro(libro);
+      }
+      
   } catch (error) {
     console.error("Error:", error);
   } finally {
