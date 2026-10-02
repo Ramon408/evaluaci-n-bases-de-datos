@@ -60,7 +60,12 @@ async function actualizarLibro(
     return;
   }
 
-  console.log("Libro actualizado correctamente.");
+  const libroActualizado = await coleccionLibros().findOne({
+    _id: id
+  });
+
+  console.log("Libro actualizado:");
+  console.log(libroActualizado);
 }
 
 async function eliminarLibro(id: ObjectId): Promise<void> {
